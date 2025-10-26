@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nusantara Energy Hub - Mobile App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        
+        .phone-frame {
+            max-width: 400px;
+            margin: 0 auto;
+            height: 100vh;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+        }
+        
+        .status-bar .time {
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            z-index: 100;
+        }
+        
+        .nav h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+        }
+        
+        .nav .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-top: 2px;
+        }
+        
+        /* Content */
+        .content {
+            padding: 120px 20px 80px;
+            min-height: 100vh;
+        }
+        
+        /* Energy Card */
+        .energy-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .energy-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        }
+        
+        .energy-value {
+            font-size: 56px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        
+        .energy-unit {
+            font-size: 20px;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        .energy-label {
+            font-size: 15px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        .energy-status {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #fff;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        .energy-status.selling {
+            background: rgba(100, 200, 100, 0.2);
+            color: #5fd35f;
+        }
+        
+        .energy-status.buying {
+            background: rgba(255, 150, 100, 0.2);
+            color: #ffb380;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #888;
+        }
+        
+        /* Trading Section */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin: 30px 0 15px;
+        }
+        
+        .trading-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .trading-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .trading-building {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .trading-badge {
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .trading-badge.available {
+            background: rgba(100, 200, 100, 0.2);
+            color: #5fd35f;
+        }
+        
+        .trading-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .trading-detail {
+            flex: 1;
+        }
+        
+        .trading-detail-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        
+        .trading-detail-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .btn-trade {
+            width: 100%;
+            padding: 15px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 30px;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .nav-item.active {
+            color: #fff;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Screen transitions */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="time" id="time">9:41</div>
+            <div class="icons">
+                <span>📶</span>
+                <span>📡</span>
+                <span>🔋</span>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav">
+            <h1>Energy Hub</h1>
+            <div class="subtitle">Your Smart Energy Trading</div>
+        </div>
+        
+        <!-- Home Screen -->
+        <div class="screen active" id="home">
+            <div class="content">
+                <!-- Current Energy Card -->
+                <div class="energy-card fade-in">
+                    <div class="energy-value" id="currentEnergy">2.4</div>
+                    <div class="energy-unit">kWh Available</div>
+                    <div class="energy-label">Rektorat Universitas Padjajaran - Real-time</div>
+                    <span class="energy-status selling pulse">⚡ Selling Energy</span>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid fade-in">
+                    <div class="stat-card">
+                        <div class="stat-value">Rp 45K</div>
+                        <div class="stat-label">Today's Earnings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">18.2 kg</div>
+                        <div class="stat-label">CO₂ Saved Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">AI Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Trades This Week</div>
+                    </div>
+                </div>
+                
+                <!-- Trading Opportunities -->
+                <div class="section-title">🔋 Available Trades</div>
+                
+                <div class="trading-card fade-in">
+                    <div class="trading-header">
+                        <div class="trading-building">📚 Gedung KST Lab</div>
+                        <span class="trading-badge available">● Available</span>
+                    </div>
+                    <div class="trading-info">
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Needs</div>
+                            <div class="trading-detail-value">1.8 kWh</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Price</div>
+                            <div class="trading-detail-value">Rp 2,700</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Distance</div>
+                            <div class="trading-detail-value">120m</div>
+                        </div>
+                    </div>
+                    <button class="btn-trade">Sell Energy</button>
+                </div>
+                
+                <div class="trading-card fade-in">
+                    <div class="trading-header">
+                        <div class="trading-building">🏢 Gedung FMIPA</div>
+                        <span class="trading-badge available">● Available</span>
+                    </div>
+                    <div class="trading-info">
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Needs</div>
+                            <div class="trading-detail-value">2.2 kWh</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Price</div>
+                            <div class="trading-detail-value">Rp 3,300</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Distance</div>
+                            <div class="trading-detail-value">85m</div>
+                        </div>
+                    </div>
+                    <button class="btn-trade">Sell Energy</button>
+                </div>
+                
+                <div class="trading-card fade-in">
+                    <div class="trading-header">
+                        <div class="trading-building">🎓 Gedung Rektorat</div>
+                        <span class="trading-badge available">● Available</span>
+                    </div>
+                    <div class="trading-info">
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Needs</div>
+                            <div class="trading-detail-value">3.1 kWh</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Price</div>
+                            <div class="trading-detail-value">Rp 4,650</div>
+                        </div>
+                        <div class="trading-detail">
+                            <div class="trading-detail-label">Distance</div>
+                            <div class="trading-detail-value">200m</div>
+                        </div>
+                    </div>
+                    <button class="btn-trade">Sell Energy</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="#" class="nav-item active" onclick="showScreen('home')">
+                <span class="nav-icon">⚡</span>
+                <span>Energy</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showScreen('trading')">
+                <span class="nav-icon">💹</span>
+                <span>Trading</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showScreen('analytics')">
+                <span class="nav-icon">📊</span>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" onclick="showScreen('profile')">
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+        
+        // Animate energy value
+        function animateEnergy() {
+            const energyEl = document.getElementById('currentEnergy');
+            let current = 2.4;
+            setInterval(() => {
+                current = (2.0 + Math.random() * 1.0).toFixed(1);
+                energyEl.textContent = current;
+            }, 3000); 
+        }
+        animateEnergy();
+        
+        // Screen navigation
+        function showScreen(screenName) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(screenName).classList.add('active');
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(n => n.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+        }
+        
+        // Button interactions
+        document.querySelectorAll('.btn-trade').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.textContent = '✓ Trade Confirmed!';
+                this.style.background = '#5fd35f';
+                this.style.color = '#000';
+                setTimeout(() => {
+                    this.textContent = 'Sell Energy';
+                    this.style.background = '#fff';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
